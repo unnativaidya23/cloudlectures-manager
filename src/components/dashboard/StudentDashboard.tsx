@@ -6,7 +6,7 @@ import { mockAssignments, mockCourses } from '@/utils/mockData';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/toaster';
+import { toast } from 'sonner';
 
 export function StudentDashboard() {
   const { user } = useAuth();
@@ -41,18 +41,11 @@ export function StudentDashboard() {
   
   const handleJoinCourse = () => {
     if (!courseCode.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a course code",
-        variant: "destructive"
-      });
+      toast.error("Please enter a course code");
       return;
     }
     
-    toast({
-      title: "Course Join",
-      description: `Attempting to join course with code: ${courseCode}`
-    });
+    toast.success(`Attempting to join course with code: ${courseCode}`);
   };
   
   return (
