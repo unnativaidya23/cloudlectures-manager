@@ -10,6 +10,10 @@ export interface User {
   role: UserRole;
   email: string;
   avatar?: string;
+  contactNumber?: string;
+  parentName?: string;
+  parentContactNumber?: string;
+  resume?: string;
 }
 
 interface AuthContextType {
@@ -45,7 +49,10 @@ const mockUsers: User[] = [
     name: 'Student User',
     role: 'student',
     email: 'student@example.com',
-    avatar: 'https://i.pravatar.cc/150?img=3'
+    avatar: 'https://i.pravatar.cc/150?img=3',
+    contactNumber: '+1234567890',
+    parentName: 'Parent Name',
+    parentContactNumber: '+9876543210',
   }
 ];
 

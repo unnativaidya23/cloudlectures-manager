@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,17 +8,15 @@ import {
   FileText, 
   Mail, 
   Phone, 
-  User, 
-  Upload,
-  CheckCircle
+  User
 } from 'lucide-react';
 import { mockAssignments, mockStudents } from '@/utils/mockData';
 import { toast } from 'sonner';
+import { ResumeUpload } from '@/components/student/ResumeUpload';
 
 const Profile = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [uploadingResume, setUploadingResume] = useState(false);
   
   // For student users, get more details
   const studentDetails = user?.role === 'student'
@@ -37,16 +34,6 @@ const Profile = () => {
   const handleEdit = () => {
     setIsEditing(true);
     toast.info("Profile editing is available in the full version");
-  };
-  
-  const handleResumeUpload = () => {
-    setUploadingResume(true);
-    
-    // Simulate upload delay
-    setTimeout(() => {
-      setUploadingResume(false);
-      toast.success("Resume uploaded successfully");
-    }, 1500);
   };
   
   return (
@@ -83,46 +70,19 @@ const Profile = () => {
                 <span>{user?.email}</span>
               </div>
               
-              {studentDetails && (
+              {(user?.contactNumber || studentDetails?.contactNumber) && (
                 <div className="flex items-center justify-center gap-1 text-sm text-gray-600">
                   <Phone className="h-4 w-4" />
-                  <span>{studentDetails.contactNumber}</span>
+                  <span>{user?.contactNumber || studentDetails?.contactNumber}</span>
                 </div>
               )}
               
               {user?.role === 'student' && (
-                <div className="mt-6 pt-6 border-t border-gray-100">
-                  <h3 className="font-medium mb-3">Resume</h3>
-                  
-                  {uploadingResume ? (
-                    <div className="flex items-center justify-center">
-                      <span className="loader mr-2"></span>
-                      <span>Uploading...</span>
-                    </div>
-                  ) : studentDetails?.resume ? (
-                    <div className="flex flex-col items-center">
-                      <div className="flex items-center justify-center gap-2 mb-2 text-green-600">
-                        <CheckCircle className="h-5 w-5" />
-                        <span>Resume Uploaded</span>
-                      </div>
-                      <button className="text-sm text-primary hover:underline">
-                        Download
-                      </button>
-                    </div>
-                  ) : (
-                    <button 
-                      onClick={handleResumeUpload}
-                      className="flex items-center justify-center gap-1 glass-button w-full"
-                    >
-                      <Upload className="h-4 w-4" />
-                      Upload Resume
-                    </button>
-                  )}
-                </div>
+                <ResumeUpload />
               )}
             </GlassCard>
             
-            {studentDetails && (
+            {user?.role === 'student' && (user?.parentName || studentDetails?.parentName) && (
               <GlassCard className="mt-6">
                 <h3 className="font-medium mb-4">Parent Information</h3>
                 
@@ -131,7 +91,7 @@ const Profile = () => {
                     <User className="h-4 w-4 text-gray-500" />
                     <div>
                       <p className="text-sm text-gray-600">Parent Name</p>
-                      <p className="font-medium">{studentDetails.parentName}</p>
+                      <p className="font-medium">{user?.parentName || studentDetails?.parentName}</p>
                     </div>
                   </div>
                   
@@ -139,7 +99,7 @@ const Profile = () => {
                     <Phone className="h-4 w-4 text-gray-500" />
                     <div>
                       <p className="text-sm text-gray-600">Parent Contact</p>
-                      <p className="font-medium">{studentDetails.parentContactNumber}</p>
+                      <p className="font-medium">{user?.parentContactNumber || studentDetails?.parentContactNumber}</p>
                     </div>
                   </div>
                 </div>

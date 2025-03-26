@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -7,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { DeadlineReminder } from '@/components/assignments/DeadlineReminder';
+import { SmartSummarizer } from '@/components/materials/SmartSummarizer';
 
 export function StudentDashboard() {
   const { user } = useAuth();
@@ -150,18 +153,26 @@ export function StudentDashboard() {
                       {releasedMaterials.map((material) => (
                         <div
                           key={material.id}
-                          className="flex items-center justify-between bg-white/70 p-2 rounded"
+                          className="flex flex-col bg-white/70 p-2 rounded"
                         >
-                          <div className="flex items-center gap-2">
-                            <BookOpen className="h-4 w-4 text-blue-500" />
-                            <span className="text-sm">{material.title}</span>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <BookOpen className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm">{material.title}</span>
+                            </div>
+                            <Link
+                              to={material.url}
+                              className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
+                            >
+                              View
+                            </Link>
                           </div>
-                          <Link
-                            to={material.url}
-                            className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
-                          >
-                            View
-                          </Link>
+                          
+                          {/* Smart Summarization Component */}
+                          <SmartSummarizer 
+                            materialId={material.id} 
+                            materialTitle={material.title} 
+                          />
                         </div>
                       ))}
                     </div>
@@ -186,12 +197,13 @@ export function StudentDashboard() {
             {assignments.map((assignment) => {
               const status = getAssignmentStatus(assignment.id);
               const dueSoon = isDueSoon(assignment.dueDate);
+              const isSubmitted = status === 'submitted';
               
               return (
                 <div
                   key={assignment.id}
                   className={`p-4 rounded-lg ${
-                    status === 'submitted' 
+                    isSubmitted 
                       ? 'bg-green-50/70' 
                       : dueSoon 
                         ? 'bg-amber-50/70' 
@@ -215,20 +227,28 @@ export function StudentDashboard() {
                     {assignment.description.length > 60 ? '...' : ''}
                   </p>
                   
-                  <div className="flex justify-between items-center">
+                  {/* Deadline Reminder Component */}
+                  <DeadlineReminder 
+                    dueDate={assignment.dueDate}
+                    title={assignment.title}
+                    id={assignment.id}
+                    isSubmitted={isSubmitted}
+                  />
+                  
+                  <div className="flex justify-between items-center mt-2">
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      status === 'submitted' 
+                      isSubmitted 
                         ? 'bg-green-100 text-green-800'
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {status === 'submitted' ? 'Submitted' : 'Pending'}
+                      {isSubmitted ? 'Submitted' : 'Pending'}
                     </span>
                     
                     <Link
                       to={`/assignments/${assignment.id}`}
                       className="flex items-center gap-1 text-sm text-primary hover:underline"
                     >
-                      {status === 'submitted' ? (
+                      {isSubmitted ? (
                         <>View Submission</>
                       ) : (
                         <>
