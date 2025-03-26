@@ -1,17 +1,19 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/glass-card';
 import { BookOpen, Calendar, CheckCircle, FileText, Upload } from 'lucide-react';
 import { mockAssignments, mockCourses } from '@/utils/mockData';
 import { useAuth } from '@/contexts/AuthContext';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/toaster';
 
 export function StudentDashboard() {
   const { user } = useAuth();
   const [courses] = useState(mockCourses);
   const [assignments] = useState(mockAssignments);
+  const [courseCode, setCourseCode] = useState('');
   
-  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -21,7 +23,6 @@ export function StudentDashboard() {
     });
   };
   
-  // Function to calculate if the assignment is due soon (within 3 days)
   const isDueSoon = (dueDate: string) => {
     const today = new Date();
     const due = new Date(dueDate);
@@ -30,13 +31,28 @@ export function StudentDashboard() {
     return diffDays >= 0 && diffDays <= 3;
   };
   
-  // Get the student's assignment status
   const getAssignmentStatus = (assignmentId: string) => {
     const assignment = assignments.find(a => a.id === assignmentId);
     if (!assignment) return 'pending';
     
     const submission = assignment.submissions.find(s => s.studentId === user?.id);
     return submission ? 'submitted' : 'pending';
+  };
+  
+  const handleJoinCourse = () => {
+    if (!courseCode.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a course code",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    toast({
+      title: "Course Join",
+      description: `Attempting to join course with code: ${courseCode}`
+    });
   };
   
   return (
@@ -53,6 +69,22 @@ export function StudentDashboard() {
           </div>
           <p className="text-3xl font-medium mb-1">{courses.length}</p>
           <p className="text-sm text-gray-600 mb-3">Enrolled courses</p>
+          
+          <div className="flex space-x-2 mt-2">
+            <Input 
+              placeholder="Enter course code" 
+              value={courseCode}
+              onChange={(e) => setCourseCode(e.target.value)}
+              className="flex-1"
+            />
+            <Button 
+              onClick={handleJoinCourse}
+              variant="default"
+            >
+              Join
+            </Button>
+          </div>
+          
           <Link 
             to="/courses" 
             className="mt-auto text-sm text-primary hover:underline"
@@ -111,7 +143,6 @@ export function StudentDashboard() {
           
           <div className="space-y-4">
             {courses.map((course) => {
-              // Only show released materials
               const releasedMaterials = course.materials.filter(m => m.isReleased);
               
               return (
