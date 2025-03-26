@@ -6,11 +6,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { GlassCard } from '@/components/ui/glass-card';
 import { BookOpen, FileText, Plus, Users } from 'lucide-react';
 import { mockCourses } from '@/utils/mockData';
+import { CourseForm } from '@/components/courses/CourseForm';
+import { Button } from '@/components/ui/button';
 
 const Courses = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [courses] = useState(mockCourses);
+  const [courses, setCourses] = useState(mockCourses);
+  const [formOpen, setFormOpen] = useState(false);
+  const [courseToEdit, setCourseToEdit] = useState<any>(null);
   
   // Filter courses based on user role
   const filteredCourses = user?.role === 'trainer'
@@ -26,6 +30,16 @@ const Courses = () => {
       year: 'numeric'
     });
   };
+
+  const handleAddCourse = () => {
+    setCourseToEdit(null);
+    setFormOpen(true);
+  };
+
+  const handleEditCourse = (course: any) => {
+    setCourseToEdit(course);
+    setFormOpen(true);
+  };
   
   return (
     <DashboardLayout>
@@ -35,13 +49,13 @@ const Courses = () => {
           
           {/* Only show add course button for admin and trainer */}
           {(user?.role === 'admin' || user?.role === 'trainer') && (
-            <button 
-              onClick={() => navigate('/courses/new')}
-              className="flex items-center gap-1 glass-button"
+            <Button 
+              onClick={handleAddCourse}
+              className="flex items-center gap-1"
             >
               <Plus className="h-4 w-4" />
               Add Course
-            </button>
+            </Button>
           )}
         </div>
         
@@ -76,21 +90,34 @@ const Courses = () => {
                 </div>
                 
                 <div className="flex flex-col gap-2">
-                  <button
+                  <Button
                     onClick={() => navigate(`/courses/${course.id}`)}
-                    className="glass-button w-full md:w-auto"
+                    variant="default"
+                    className="w-full md:w-auto"
                   >
                     View Course
-                  </button>
+                  </Button>
                   
                   {/* Only show manage materials button for admin and trainer */}
                   {(user?.role === 'admin' || (user?.role === 'trainer' && course.trainerId === user.id)) && (
-                    <button
-                      onClick={() => navigate(`/courses/${course.id}/materials`)}
-                      className="text-sm text-primary hover:underline"
-                    >
-                      Manage Materials
-                    </button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => navigate(`/courses/${course.id}/materials`)}
+                        variant="outline" 
+                        size="sm"
+                        className="text-sm"
+                      >
+                        Manage Materials
+                      </Button>
+                      <Button
+                        onClick={() => handleEditCourse(course)}
+                        variant="outline"
+                        size="sm"
+                        className="text-sm"
+                      >
+                        Edit Course
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -108,18 +135,25 @@ const Courses = () => {
               </p>
               
               {(user?.role === 'admin' || user?.role === 'trainer') && (
-                <button 
-                  onClick={() => navigate('/courses/new')}
+                <Button 
+                  onClick={handleAddCourse}
                   className="glass-button"
                 >
                   <Plus className="h-4 w-4 mr-1" />
                   Create First Course
-                </button>
+                </Button>
               )}
             </div>
           )}
         </div>
       </div>
+
+      {/* Course Form Sheet */}
+      <CourseForm 
+        open={formOpen} 
+        onClose={() => setFormOpen(false)} 
+        editCourse={courseToEdit}
+      />
     </DashboardLayout>
   );
 };

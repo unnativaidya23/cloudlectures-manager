@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/glass-card';
 import { 
   Calendar, 
@@ -11,11 +11,15 @@ import {
 } from 'lucide-react';
 import { mockAssignments, mockCourses, mockStudents } from '@/utils/mockData';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { CourseForm } from '@/components/courses/CourseForm';
 
 export function TrainerDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [courses] = useState(mockCourses);
   const [assignments] = useState(mockAssignments);
+  const [formOpen, setFormOpen] = useState(false);
   
   // Get courses for this trainer
   const trainerCourses = courses.filter(course => course.trainerId === user?.id);
@@ -40,20 +44,22 @@ export function TrainerDashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-medium">Trainer Dashboard</h1>
         <div className="flex gap-3">
-          <Link 
-            to="/courses/new" 
-            className="flex items-center gap-1 glass-button text-sm"
+          <Button 
+            onClick={() => setFormOpen(true)}
+            className="flex items-center gap-1"
+            size="sm"
           >
             <Plus className="h-4 w-4" />
             New Course
-          </Link>
-          <Link 
-            to="/assignments/new" 
-            className="flex items-center gap-1 glass-button text-sm"
+          </Button>
+          <Button 
+            onClick={() => navigate('/assignments/new')}
+            className="flex items-center gap-1"
+            size="sm"
           >
             <Plus className="h-4 w-4" />
             New Assignment
-          </Link>
+          </Button>
         </div>
       </div>
       
@@ -67,12 +73,14 @@ export function TrainerDashboard() {
           </div>
           <p className="text-3xl font-medium mb-1">{trainerCourses.length}</p>
           <p className="text-sm text-gray-600 mb-3">Active courses</p>
-          <Link 
-            to="/courses" 
-            className="mt-auto text-sm text-primary hover:underline"
+          <Button 
+            onClick={() => navigate('/courses')}
+            className="mt-auto" 
+            variant="outline"
+            size="sm"
           >
             Manage courses
-          </Link>
+          </Button>
         </GlassCard>
         
         <GlassCard className="flex flex-col h-full">
@@ -84,12 +92,14 @@ export function TrainerDashboard() {
           </div>
           <p className="text-3xl font-medium mb-1">{trainerAssignments.length}</p>
           <p className="text-sm text-gray-600 mb-3">Active assignments</p>
-          <Link 
-            to="/assignments" 
-            className="mt-auto text-sm text-primary hover:underline"
+          <Button 
+            onClick={() => navigate('/assignments')}
+            className="mt-auto" 
+            variant="outline"
+            size="sm"
           >
             View assignments
-          </Link>
+          </Button>
         </GlassCard>
         
         <GlassCard className="flex flex-col h-full">
@@ -101,12 +111,14 @@ export function TrainerDashboard() {
           </div>
           <p className="text-3xl font-medium mb-1">{mockStudents.length}</p>
           <p className="text-sm text-gray-600 mb-3">Enrolled students</p>
-          <Link 
-            to="/students" 
-            className="mt-auto text-sm text-primary hover:underline"
+          <Button 
+            onClick={() => navigate('/students')}
+            className="mt-auto" 
+            variant="outline"
+            size="sm"
           >
             Manage students
-          </Link>
+          </Button>
         </GlassCard>
       </div>
       
@@ -114,9 +126,13 @@ export function TrainerDashboard() {
         <GlassCard>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium">Your Courses</h3>
-            <Link to="/courses" className="text-sm text-primary hover:underline">
+            <Button 
+              onClick={() => navigate('/courses')}
+              variant="link"
+              size="sm"
+            >
               View All
-            </Link>
+            </Button>
           </div>
           
           <div className="space-y-4">
@@ -137,12 +153,14 @@ export function TrainerDashboard() {
                     <span className="text-gray-500">
                       Created: {formatDate(course.createdAt)}
                     </span>
-                    <Link
-                      to={`/courses/${course.id}`}
-                      className="text-primary hover:underline"
+                    <Button
+                      onClick={() => navigate(`/courses/${course.id}`)}
+                      variant="link"
+                      size="sm"
+                      className="text-primary p-0 h-auto"
                     >
                       Manage
-                    </Link>
+                    </Button>
                   </div>
                 </div>
               ))
@@ -150,12 +168,13 @@ export function TrainerDashboard() {
               <div className="text-center py-6 text-gray-500">
                 <BookOpen className="h-10 w-10 mx-auto mb-2 opacity-30" />
                 <p>No courses yet.</p>
-                <Link 
-                  to="/courses/new" 
-                  className="text-primary hover:underline mt-2 inline-block"
+                <Button 
+                  onClick={() => setFormOpen(true)}
+                  variant="link"
+                  className="mt-2"
                 >
                   Create your first course
-                </Link>
+                </Button>
               </div>
             )}
           </div>
@@ -164,9 +183,13 @@ export function TrainerDashboard() {
         <GlassCard>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium">Upcoming Deadlines</h3>
-            <Link to="/assignments" className="text-sm text-primary hover:underline">
+            <Button 
+              onClick={() => navigate('/assignments')}
+              variant="link"
+              size="sm"
+            >
               View All
-            </Link>
+            </Button>
           </div>
           
           <div className="space-y-4">
@@ -193,12 +216,14 @@ export function TrainerDashboard() {
                     <span className="text-gray-500">
                       Submissions: {assignment.submissions.length}
                     </span>
-                    <Link
-                      to={`/assignments/${assignment.id}`}
-                      className="text-primary hover:underline"
+                    <Button
+                      onClick={() => navigate(`/assignments/${assignment.id}`)}
+                      variant="link"
+                      size="sm"
+                      className="text-primary p-0 h-auto"
                     >
                       View Details
-                    </Link>
+                    </Button>
                   </div>
                 </div>
               ))
@@ -206,17 +231,24 @@ export function TrainerDashboard() {
               <div className="text-center py-6 text-gray-500">
                 <FileText className="h-10 w-10 mx-auto mb-2 opacity-30" />
                 <p>No assignments yet.</p>
-                <Link 
-                  to="/assignments/new" 
-                  className="text-primary hover:underline mt-2 inline-block"
+                <Button 
+                  onClick={() => navigate('/assignments/new')}
+                  variant="link"
+                  className="mt-2"
                 >
                   Create your first assignment
-                </Link>
+                </Button>
               </div>
             )}
           </div>
         </GlassCard>
       </div>
+
+      {/* Course Form Sheet */}
+      <CourseForm 
+        open={formOpen} 
+        onClose={() => setFormOpen(false)}
+      />
     </div>
   );
 }
