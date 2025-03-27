@@ -1,12 +1,14 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Plus, User, Users, BookOpen, BarChart } from 'lucide-react';
 import { mockStudents, mockTrainers } from '@/utils/mockData';
 import { Button } from '@/components/ui/button';
+import { TrainerForm } from '@/components/trainers/TrainerForm';
 
 export function AdminDashboard() {
+  const navigate = useNavigate();
   const [students] = useState(mockStudents);
   const [trainers] = useState(mockTrainers);
   const [formOpen, setFormOpen] = useState(false);
@@ -148,6 +150,13 @@ export function AdminDashboard() {
           </div>
         </GlassCard>
       </div>
+      
+      {/* Add TrainerForm component */}
+      <TrainerForm 
+        open={formOpen} 
+        onClose={() => setFormOpen(false)}
+        editTrainerId={undefined}
+      />
     </div>
   );
 }

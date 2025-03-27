@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,6 +48,27 @@ export function TrainerForm({ open, onClose, editTrainerId }: TrainerFormProps) 
       contactNumber: '',
     },
   });
+  
+  // Reset form when editTrainerId changes
+  useEffect(() => {
+    if (editTrainer) {
+      form.reset({
+        name: editTrainer.name,
+        email: editTrainer.email,
+        specialization: editTrainer.specialization,
+        bio: '',
+        contactNumber: '',
+      });
+    } else {
+      form.reset({
+        name: '',
+        email: '',
+        specialization: '',
+        bio: '',
+        contactNumber: '',
+      });
+    }
+  }, [editTrainer, form]);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   
