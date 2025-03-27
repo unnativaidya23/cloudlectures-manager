@@ -27,9 +27,15 @@ export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
   const [materials, setMaterials] = useState<Material[]>(
     editCourse?.materials || []
   );
-  const [newMaterial, setNewMaterial] = useState({
+  
+  // Fixed the type definition here to match the Material interface
+  const [newMaterial, setNewMaterial] = useState<{
+    title: string;
+    type: 'ppt' | 'pdf' | 'doc';
+    isReleased: boolean;
+  }>({
     title: '',
-    type: 'ppt' as const,
+    type: 'ppt',
     isReleased: false
   });
 
