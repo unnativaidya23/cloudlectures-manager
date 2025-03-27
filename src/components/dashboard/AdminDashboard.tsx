@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Plus, User, Users, BookOpen, BarChart } from 'lucide-react';
 import { mockStudents, mockTrainers } from '@/utils/mockData';
+import { Button } from '@/components/ui/button';
 
 export function AdminDashboard() {
   const [students] = useState(mockStudents);
   const [trainers] = useState(mockTrainers);
+  const [formOpen, setFormOpen] = useState(false);
   
   const stats = [
     {
@@ -44,13 +46,14 @@ export function AdminDashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-medium">Admin Dashboard</h1>
-        <Link 
-          to="/trainers/new" 
-          className="flex items-center gap-1 glass-button text-sm"
+        <Button 
+          onClick={() => setFormOpen(true)}
+          className="flex items-center gap-1"
+          size="sm"
         >
           <Plus className="h-4 w-4" />
           Add New Trainer
-        </Link>
+        </Button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
