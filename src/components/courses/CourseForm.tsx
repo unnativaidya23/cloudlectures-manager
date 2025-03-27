@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { GlassCard } from '@/components/ui/glass-card';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockCourses } from '@/utils/mockData';
+import { mockCourses, Material } from '@/utils/mockData';
 import { X, Upload } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
@@ -24,7 +24,7 @@ export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
   
   const [title, setTitle] = useState(editCourse?.title || '');
   const [description, setDescription] = useState(editCourse?.description || '');
-  const [materials, setMaterials] = useState<{title: string, type: 'ppt' | 'pdf' | 'doc', url: string, isReleased: boolean}[]>(
+  const [materials, setMaterials] = useState<Material[]>(
     editCourse?.materials || []
   );
   const [newMaterial, setNewMaterial] = useState({
@@ -39,14 +39,17 @@ export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
       return;
     }
     
-    setMaterials([
-      ...materials, 
-      { 
-        ...newMaterial, 
-        url: '#', // Placeholder URL
-        id: Math.random().toString(36).substring(7)
-      }
-    ]);
+    // Create new material with required properties
+    const newMaterialItem: Material = {
+      id: Math.random().toString(36).substring(7),
+      title: newMaterial.title,
+      type: newMaterial.type,
+      url: '#', // Placeholder URL
+      isReleased: newMaterial.isReleased,
+      uploadDate: new Date().toISOString()
+    };
+    
+    setMaterials([...materials, newMaterialItem]);
     
     // Reset the form
     setNewMaterial({
