@@ -97,7 +97,7 @@ export default function TrainerDetail() {
                   <div className="flex justify-between mb-2">
                     <h3 className="text-lg font-medium">{course.title}</h3>
                     <span className="text-sm text-muted-foreground">
-                      {course.enrolled} students
+                      {course.materials.length} materials
                     </span>
                   </div>
                   
