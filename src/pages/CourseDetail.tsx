@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { mockCourses, mockStudents } from '@/utils/mockData';
 import { BookOpen, Calendar, Clock, FileText, Settings, Users } from 'lucide-react';
 import { SmartSummarizer } from '@/components/materials/SmartSummarizer';
+import { CourseAIChatbot } from '@/components/chatbot/CourseAIChatbot';
 import { toast } from 'sonner';
 
 const CourseDetail = () => {
@@ -299,6 +300,13 @@ const CourseDetail = () => {
                 )}
               </div>
             </GlassCard>
+            
+            {/* AI Chatbot - only show for students */}
+            {user?.role === 'student' && (
+              <div className="mt-6">
+                <CourseAIChatbot courseId={course.id} courseTitle={course.title} />
+              </div>
+            )}
           </div>
         </div>
       </div>
