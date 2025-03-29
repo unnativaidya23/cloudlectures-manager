@@ -3,3 +3,5 @@
 // All required fields are now included in the mockData.ts interfaces:
 // - Course now has courseCode and students fields
 // - Trainer now has username, bio, and contactNumber fields
+// 
+// These fields are implemented and used throughout the application.

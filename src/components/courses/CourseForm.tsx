@@ -7,14 +7,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { GlassCard } from '@/components/ui/glass-card';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockCourses, Material } from '@/utils/mockData';
+import { mockCourses, Material, Course } from '@/utils/mockData';
 import { X, Upload } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface CourseFormProps {
   open: boolean;
   onClose: () => void;
-  editCourse?: any;
+  editCourse?: Course;
 }
 
 export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
@@ -24,6 +24,7 @@ export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
   
   const [title, setTitle] = useState(editCourse?.title || '');
   const [description, setDescription] = useState(editCourse?.description || '');
+  const [courseCode, setCourseCode] = useState(editCourse?.courseCode || '');
   const [materials, setMaterials] = useState<Material[]>(
     editCourse?.materials || []
   );
@@ -81,6 +82,12 @@ export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
       return;
     }
     
+    if (!courseCode) {
+      toast.error("Course code is required");
+      setIsSubmitting(false);
+      return;
+    }
+    
     // Simulate API call delay
     setTimeout(() => {
       if (editCourse) {
@@ -91,19 +98,22 @@ export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
             ...mockCourses[courseIndex],
             title,
             description,
+            courseCode,
             materials
           };
           toast.success("Course updated successfully");
         }
       } else {
         // Add new course
-        const newCourse = {
+        const newCourse: Course = {
           id: (mockCourses.length + 1).toString(),
           title,
           description,
+          courseCode,
           materials,
           createdAt: new Date().toISOString(),
-          trainerId: user?.id || ''
+          trainerId: user?.id || '',
+          students: [] // Initialize with empty array
         };
         mockCourses.push(newCourse);
         toast.success("Course created successfully");
@@ -130,6 +140,16 @@ export function CourseForm({ open, onClose, editCourse }: CourseFormProps) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter course title"
+                className="mt-1"
+              />
+            </label>
+            
+            <label className="text-sm font-medium">
+              Course Code
+              <Input 
+                value={courseCode}
+                onChange={(e) => setCourseCode(e.target.value)}
+                placeholder="Enter course code (e.g. CS101)"
                 className="mt-1"
               />
             </label>
