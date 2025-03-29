@@ -1,29 +1,5 @@
 
-// This is a helper file to update your mockData.ts types
-// Make sure your mockTrainers have username, bio, and contactNumber fields
-// And your mockCourses have courseCode and students fields
-
-/*
-Example updates you should make to mockData.ts:
-
-export interface Course {
-  id: string;
-  title: string;
-  description: string;
-  trainerId: string;
-  materials: Material[];
-  courseCode: string;  // Add this field
-  students: string[];  // Add this field
-}
-
-export interface Trainer {
-  id: string;
-  name: string;
-  email: string;
-  specialization: string;
-  courses: string[];
-  username: string;  // Add this field
-  bio?: string;       // Add this field
-  contactNumber?: string;  // Add this field
-}
-*/
+// This file is now deprecated as we've updated the mockData.ts types directly
+// All required fields are now included in the mockData.ts interfaces:
+// - Course now has courseCode and students fields
+// - Trainer now has username, bio, and contactNumber fields
