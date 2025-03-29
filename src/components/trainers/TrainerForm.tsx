@@ -16,6 +16,8 @@ import { mockTrainers } from '@/utils/mockData';
 // Form validation schema
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
+  username: z.string().min(3, { message: 'Username must be at least 3 characters' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
   email: z.string().email({ message: 'Please enter a valid email address' }),
   specialization: z.string().min(2, { message: 'Specialization is required' }),
   bio: z.string().optional(),
@@ -42,33 +44,39 @@ export function TrainerForm({ open, onClose, editTrainerId }: TrainerFormProps) 
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: editTrainer?.name || '',
+      username: editTrainer?.username || '',
+      password: '',
       email: editTrainer?.email || '',
       specialization: editTrainer?.specialization || '',
-      bio: '',
-      contactNumber: '',
+      bio: editTrainer?.bio || '',
+      contactNumber: editTrainer?.contactNumber || '',
     },
   });
   
-  // Reset form when editTrainerId changes
+  // Reset form when editTrainerId changes or when modal opens/closes
   useEffect(() => {
     if (editTrainer) {
       form.reset({
         name: editTrainer.name,
+        username: editTrainer.username || '',
+        password: '',
         email: editTrainer.email,
         specialization: editTrainer.specialization,
-        bio: '',
-        contactNumber: '',
+        bio: editTrainer.bio || '',
+        contactNumber: editTrainer.contactNumber || '',
       });
     } else {
       form.reset({
         name: '',
+        username: '',
+        password: '',
         email: '',
         specialization: '',
         bio: '',
         contactNumber: '',
       });
     }
-  }, [editTrainer, form]);
+  }, [editTrainer, form, open]);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -87,8 +95,11 @@ export function TrainerForm({ open, onClose, editTrainerId }: TrainerFormProps) 
         const newTrainer = {
           id: (mockTrainers.length + 1).toString(),
           name: values.name,
+          username: values.username,
           email: values.email,
           specialization: values.specialization,
+          bio: values.bio || '',
+          contactNumber: values.contactNumber || '',
           courses: [],
         };
         
@@ -100,8 +111,11 @@ export function TrainerForm({ open, onClose, editTrainerId }: TrainerFormProps) 
           mockTrainers[trainerIndex] = {
             ...mockTrainers[trainerIndex],
             name: values.name,
+            username: values.username,
             email: values.email,
             specialization: values.specialization,
+            bio: values.bio || '',
+            contactNumber: values.contactNumber || '',
           };
         }
       }
@@ -150,6 +164,34 @@ export function TrainerForm({ open, onClose, editTrainerId }: TrainerFormProps) 
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter trainer's full name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter trainer's username" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{editTrainerId ? 'New Password (leave empty to keep current)' : 'Password'}</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Enter password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
