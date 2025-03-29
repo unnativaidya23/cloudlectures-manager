@@ -1,30 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetClose } from '@/components/ui/sheet';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { mockTrainers } from '@/utils/mockData';
-
-// Form validation schema
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
-  username: z.string().min(3, { message: 'Username must be at least 3 characters' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  specialization: z.string().min(2, { message: 'Specialization is required' }),
-  bio: z.string().optional(),
-  contactNumber: z.string().optional(),
-});
-
-type TrainerFormValues = z.infer<typeof formSchema>;
+import { TrainerFormContent } from './TrainerFormContent';
+import { TrainerFormValues } from './TrainerFormTypes';
 
 interface TrainerFormProps {
   open: boolean;
@@ -40,47 +23,9 @@ export function TrainerForm({ open, onClose, editTrainerId }: TrainerFormProps) 
   // Get trainer data if editing
   const editTrainer = editTrainerId ? mockTrainers.find(trainer => trainer.id === editTrainerId) : undefined;
   
-  const form = useForm<TrainerFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: editTrainer?.name || '',
-      username: editTrainer?.username || '',
-      password: '',
-      email: editTrainer?.email || '',
-      specialization: editTrainer?.specialization || '',
-      bio: editTrainer?.bio || '',
-      contactNumber: editTrainer?.contactNumber || '',
-    },
-  });
-  
-  // Reset form when editTrainerId changes or when modal opens/closes
-  useEffect(() => {
-    if (editTrainer) {
-      form.reset({
-        name: editTrainer.name,
-        username: editTrainer.username || '',
-        password: '',
-        email: editTrainer.email,
-        specialization: editTrainer.specialization,
-        bio: editTrainer.bio || '',
-        contactNumber: editTrainer.contactNumber || '',
-      });
-    } else {
-      form.reset({
-        name: '',
-        username: '',
-        password: '',
-        email: '',
-        specialization: '',
-        bio: '',
-        contactNumber: '',
-      });
-    }
-  }, [editTrainer, form, open]);
-  
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const onSubmit = async (values: TrainerFormValues) => {
+  const handleSubmit = async (values: TrainerFormValues) => {
     setIsSubmitting(true);
     
     try {
@@ -154,120 +99,13 @@ export function TrainerForm({ open, onClose, editTrainerId }: TrainerFormProps) 
         </SheetHeader>
         
         <div className="mt-6">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter trainer's full name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter trainer's username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{editTrainerId ? 'New Password (leave empty to keep current)' : 'Password'}</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Enter password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="trainer@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="specialization"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Specialization</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Web Development, Data Science" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bio</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Brief description of trainer's background and expertise" 
-                        {...field} 
-                        className="min-h-[100px]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="contactNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contact Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Optional contact number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="flex justify-end space-x-2 pt-4">
-                <SheetClose asChild>
-                  <Button variant="outline" type="button">Cancel</Button>
-                </SheetClose>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Saving...' : editTrainerId ? 'Update Trainer' : 'Add Trainer'}
-                </Button>
-              </div>
-            </form>
-          </Form>
+          <TrainerFormContent 
+            onSubmit={handleSubmit} 
+            isSubmitting={isSubmitting} 
+            editTrainer={editTrainer} 
+            editTrainerId={editTrainerId}
+            onClose={onClose}
+          />
         </div>
       </SheetContent>
     </Sheet>
