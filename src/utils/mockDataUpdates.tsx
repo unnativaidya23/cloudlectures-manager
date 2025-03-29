@@ -12,8 +12,8 @@ export interface Course {
   description: string;
   trainerId: string;
   materials: Material[];
-  courseCode?: string;  // Add this field
-  students?: string[];  // Add this field
+  courseCode: string;  // Add this field
+  students: string[];  // Add this field
 }
 
 export interface Trainer {
@@ -22,7 +22,7 @@ export interface Trainer {
   email: string;
   specialization: string;
   courses: string[];
-  username?: string;  // Add this field
+  username: string;  // Add this field
   bio?: string;       // Add this field
   contactNumber?: string;  // Add this field
 }
